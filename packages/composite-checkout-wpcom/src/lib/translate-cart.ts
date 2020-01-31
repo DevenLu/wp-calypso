@@ -30,6 +30,7 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 		credits_integer,
 		credits_display,
 		allowed_payment_methods,
+		coupon,
 	} = serverCart;
 
 	const taxLineItem: CheckoutCartItem = {
@@ -69,6 +70,7 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 			.map( readWPCOMPaymentMethodClass )
 			.map( translateWpcomPaymentMethodToCheckoutPaymentMethod )
 			.filter( Boolean ),
+		couponCode: coupon,
 	};
 }
 
