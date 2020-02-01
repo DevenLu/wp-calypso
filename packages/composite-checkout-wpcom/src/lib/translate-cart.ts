@@ -31,6 +31,8 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 		credits_display,
 		allowed_payment_methods,
 		coupon,
+		coupon_discounts,
+		is_coupon_applied,
 	} = serverCart;
 
 	const taxLineItem: CheckoutCartItem = {
@@ -41,6 +43,24 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 			currency: currency,
 			value: total_tax_integer,
 			displayValue: total_tax_display,
+		},
+	};
+
+	const couponValueRaw = products
+		.map( product => coupon_discounts[ product.product_id ] )
+		.filter( Boolean )
+		.reduce( ( accum, current ) => accum + current, 0 );
+	const couponValue = Math.round( 100 * couponValueRaw ) / 100;
+	const couponDisplayValue = `-$${ couponValue }`;
+
+	const couponLineItem: CheckoutCartItem = {
+		id: 'coupon-line-item',
+		label: `Coupon: ${ coupon }`,
+		type: 'coupon',
+		amount: {
+			currency: currency,
+			value: couponValue,
+			displayValue: couponDisplayValue,
 		},
 	};
 
@@ -56,6 +76,7 @@ export function translateWpcomCartToCheckoutCart( serverCart: ResponseCart ): WP
 	return {
 		items: products.map( translateWpcomCartItemToCheckoutCartItem ),
 		tax: taxLineItem,
+		coupon: is_coupon_applied ? couponLineItem : null,
 		total: totalItem,
 		credits: {
 			id: 'credits',
