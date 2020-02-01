@@ -41,6 +41,7 @@ export interface ShoppingCartManager {
 	allowedPaymentMethods: string[];
 	items: WPCOMCartItem[];
 	tax: CheckoutCartItem;
+	couponItem: CheckoutCartItem;
 	total: CheckoutCartTotal;
 	credits: CheckoutCartItem;
 	addItem: ( WPCOMCartItem ) => void;
@@ -260,6 +261,7 @@ export function useShoppingCart(
 		isLoading: cacheStatus === 'fresh',
 		items: cart.items,
 		tax: cart.tax,
+		couponItem: cart.coupon,
 		total: cart.total,
 		credits: cart.credits,
 		errors: responseCart.messages?.errors ?? [],
